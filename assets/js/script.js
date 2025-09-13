@@ -14,7 +14,7 @@ sidebarBtn.addEventListener("click", function () {
 	elementToggleFunc(sidebar);
 });
 
-// testimonials variables
+// testimonials variables (optional)
 const testimonialsItem = document.querySelectorAll("[data-testimonials-item]");
 const modalContainer = document.querySelector("[data-modal-container]");
 const modalCloseBtn = document.querySelector("[data-modal-close-btn]");
@@ -31,21 +31,21 @@ const testimonialsModalFunc = function () {
 	overlay.classList.toggle("active");
 };
 
-// add click event to all modal items
-for (let i = 0; i < testimonialsItem.length; i++) {
-	testimonialsItem[i].addEventListener("click", function () {
-		modalImg.src = this.querySelector("[data-testimonials-avatar]").src;
-		modalImg.alt = this.querySelector("[data-testimonials-avatar]").alt;
-		modalTitle.innerHTML = this.querySelector("[data-testimonials-title]").innerHTML;
-		modalText.innerHTML = this.querySelector("[data-testimonials-text]").innerHTML;
+// add click event to all modal items (guarded if present)
+if (testimonialsItem && testimonialsItem.length && modalContainer && overlay) {
+	for (let i = 0; i < testimonialsItem.length; i++) {
+		testimonialsItem[i].addEventListener("click", function () {
+			modalImg.src = this.querySelector("[data-testimonials-avatar]").src;
+			modalImg.alt = this.querySelector("[data-testimonials-avatar]").alt;
+			modalTitle.innerHTML = this.querySelector("[data-testimonials-title]").innerHTML;
+			modalText.innerHTML = this.querySelector("[data-testimonials-text]").innerHTML;
 
-		testimonialsModalFunc();
-	});
+			testimonialsModalFunc();
+		});
+	}
+	if (modalCloseBtn) modalCloseBtn.addEventListener("click", testimonialsModalFunc);
+	overlay.addEventListener("click", testimonialsModalFunc);
 }
-
-// add click event to modal close button
-modalCloseBtn.addEventListener("click", testimonialsModalFunc);
-overlay.addEventListener("click", testimonialsModalFunc);
 
 // custom select variables
 const select = document.querySelector("[data-select]");
@@ -53,18 +53,22 @@ const selectItems = document.querySelectorAll("[data-select-item]");
 const selectValue = document.querySelector("[data-selecct-value]");
 const filterBtn = document.querySelectorAll("[data-filter-btn]");
 
-select.addEventListener("click", function () {
-	elementToggleFunc(this);
-});
+if (select) {
+	select.addEventListener("click", function () {
+		elementToggleFunc(this);
+	});
+}
 
 // add event in all select items
-for (let i = 0; i < selectItems.length; i++) {
-	selectItems[i].addEventListener("click", function () {
-		let selectedValue = this.innerText.toLowerCase();
-		selectValue.innerText = this.innerText;
-		elementToggleFunc(select);
-		filterFunc(selectedValue);
-	});
+if (selectItems && selectItems.length) {
+	for (let i = 0; i < selectItems.length; i++) {
+		selectItems[i].addEventListener("click", function () {
+			let selectedValue = this.innerText.toLowerCase();
+			if (selectValue) selectValue.innerText = this.innerText;
+			if (select) elementToggleFunc(select);
+			filterFunc(selectedValue);
+		});
+	}
 }
 
 // filter variables
@@ -83,18 +87,20 @@ const filterFunc = function (selectedValue) {
 };
 
 // add event in all filter button items for large screen
-let lastClickedBtn = filterBtn[0];
+if (filterBtn && filterBtn.length) {
+	let lastClickedBtn = filterBtn[0];
 
-for (let i = 0; i < filterBtn.length; i++) {
-	filterBtn[i].addEventListener("click", function () {
-		let selectedValue = this.innerText.toLowerCase();
-		selectValue.innerText = this.innerText;
-		filterFunc(selectedValue);
+	for (let i = 0; i < filterBtn.length; i++) {
+		filterBtn[i].addEventListener("click", function () {
+			let selectedValue = this.innerText.toLowerCase();
+			if (selectValue) selectValue.innerText = this.innerText;
+			filterFunc(selectedValue);
 
-		lastClickedBtn.classList.remove("active");
-		this.classList.add("active");
-		lastClickedBtn = this;
-	});
+			if (lastClickedBtn) lastClickedBtn.classList.remove("active");
+			this.classList.add("active");
+			lastClickedBtn = this;
+		});
+	}
 }
 
 // // contact form variables
@@ -148,4 +154,16 @@ for (let i = 0; i < navigationLinks.length; i++) {
 			}
 		}
 	});
+}
+
+// Resume request CTA: single button opens mailto dialog
+const resumeRequestCta = document.getElementById("resume-request-cta");
+if (resumeRequestCta) {
+  resumeRequestCta.addEventListener("click", function () {
+    const subject = encodeURIComponent("Resume Request via Portfolio");
+    const body = encodeURIComponent(
+      "Hi Dhruvi,\n\nPlease share your latest resume. I'm reaching out from [Company] for [Role].\n\nThanks!"
+    );
+    window.location.href = `mailto:dhruvikothari1993@gmail.com?subject=${subject}&body=${body}`;
+  });
 }
